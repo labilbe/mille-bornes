@@ -1,0 +1,481 @@
+:root {
+  --l-carte: 84px;
+  --h-carte: 122px;
+  --l-mini: 46px;
+  --h-mini: 67px;
+  --feutre: #0d3b2e;
+  --feutre-clair: #175843;
+  --or: #d9b45b;
+  --creme: #f3ecdc;
+  --rouge: #c0392b;
+  --vert: #37a06a;
+  --bleu: #4f8fc0;
+  --noir: #1d1d1d;
+  --ombre: 0 6px 16px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--creme);
+  background:
+    radial-gradient(ellipse at 50% 42%, var(--feutre-clair) 0%, var(--feutre) 62%, #07231b 100%);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ------------------------------------------------------------ En-tête */
+
+.barre {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0.6rem 1.2rem;
+  background: rgba(0, 0, 0, 0.28);
+  border-bottom: 1px solid rgba(217, 180, 91, 0.25);
+  flex-wrap: wrap;
+}
+
+.barre h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  color: var(--or);
+}
+
+.scores {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.score { display: flex; flex-direction: column; line-height: 1.1; }
+.score-nom { font-size: 0.7rem; opacity: 0.75; }
+.score-valeur { font-size: 1.25rem; font-weight: 600; }
+.score[data-equipe="0"] .score-valeur { color: var(--or); }
+.score-sep { opacity: 0.4; }
+
+.infos {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-left: auto;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  flex-wrap: wrap;
+}
+
+.pastille {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--creme);
+  color: var(--noir);
+  font-weight: 700;
+}
+
+.lien {
+  background: none;
+  border: 1px solid rgba(217, 180, 91, 0.5);
+  color: var(--or);
+  border-radius: 999px;
+  padding: 0.25rem 0.8rem;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.lien:hover { background: rgba(217, 180, 91, 0.15); }
+
+/* -------------------------------------------------------------- Tapis */
+
+.tapis {
+  flex: 1;
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(60px, 1fr) minmax(300px, 3fr) minmax(60px, 1fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    ".      nord   ."
+    "ouest  centre est"
+    ".      sud    .";
+  align-items: center;
+  justify-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem 1rem 1.2rem;
+  align-content: center;
+}
+
+.place-nord { grid-area: nord; }
+.place-ouest { grid-area: ouest; }
+.place-est { grid-area: est; }
+.place-sud { grid-area: sud; }
+.centre { grid-area: centre; width: 100%; }
+
+.place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.etiquette {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+}
+.etiquette.donneur::after { content: " · D"; opacity: 0.6; }
+.etiquette.partenaire { border-color: rgba(217, 180, 91, 0.45); }
+.etiquette.actif {
+  background: var(--or);
+  color: #1a2b22;
+  border-color: var(--or);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------- Cartes */
+
+.carte {
+  position: relative;
+  width: var(--l-carte);
+  height: var(--h-carte);
+  border-radius: 7px;
+  background: #fdfbf5;
+  box-shadow: var(--ombre);
+  color: var(--noir);
+  flex: 0 0 auto;
+  user-select: none;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.carte.mini { width: var(--l-mini); height: var(--h-mini); border-radius: 5px; }
+
+.carte .face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.carte.dos {
+  background: repeating-linear-gradient(45deg, #1f4e79 0 6px, #16385a 6px 12px);
+  border: 3px solid #fdfbf5;
+}
+.carte.dos.epuisee { opacity: 0.25; }
+
+/* Mains adverses : piles de dos, réduites. */
+.main-adverse { display: flex; }
+.main-nord { flex-direction: row; }
+.main-nord .carte { margin-left: calc(var(--l-mini) * -0.5); }
+.main-ouest, .main-est { flex-direction: column; }
+.main-ouest .carte, .main-est .carte { margin-top: calc(var(--h-mini) * -0.62); }
+.main-adverse .carte:first-child { margin: 0; }
+
+/* Main du joueur */
+.main-joueur {
+  display: flex;
+  gap: 0.35rem;
+  padding-top: 16px;
+}
+.main-joueur .carte.jouable,
+.main-joueur .carte.jetable { cursor: pointer; }
+.main-joueur .carte.jouable { box-shadow: 0 0 0 2px var(--or), var(--ombre); }
+.main-joueur .carte.jetable { box-shadow: 0 0 0 2px var(--rouge), var(--ombre); }
+.main-joueur .carte.jouable:hover,
+.main-joueur .carte.jouable:focus-visible,
+.main-joueur .carte.jetable:hover,
+.main-joueur .carte.jetable:focus-visible {
+  transform: translateY(-18px);
+  outline: none;
+  z-index: 2;
+}
+.main-joueur .carte.interdite { opacity: 0.45; }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2rem;
+  font-size: 0.85rem;
+}
+.consigne { opacity: 0.8; }
+
+/* ------------------------------------------------------- Les tableaux */
+
+.tableaux {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.tableau {
+  flex: 1 1 0;
+  max-width: 330px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.6rem 0.7rem 0.7rem;
+  border: 1px solid rgba(243, 236, 220, 0.18);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+}
+.tableau.mien { border-color: rgba(217, 180, 91, 0.55); }
+
+.tableau-tete {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.tableau-nom { font-weight: 600; }
+.tableau-etat {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+.tableau-etat.roule { background: rgba(55, 160, 106, 0.35); color: #cdf2de; }
+.tableau-etat.bloque { background: rgba(192, 57, 43, 0.4); color: #ffd9d3; }
+
+.compteur {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+.compteur strong { font-size: 1.7rem; color: var(--or); line-height: 1; }
+.compteur span { font-size: 0.8rem; opacity: 0.6; }
+
+.route {
+  height: 10px;
+  border-radius: 5px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 10px, transparent 10px 20px),
+    rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.route i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--vert), var(--or));
+  transition: width 0.4s ease;
+}
+
+.piles { display: flex; gap: 0.5rem; }
+.emplacement {
+  position: relative;
+  width: var(--l-mini);
+  height: var(--h-mini);
+  border: 1px dashed rgba(243, 236, 220, 0.25);
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.emplacement .face { position: absolute; inset: 0; width: 100%; height: 100%; }
+.emplacement .carte { box-shadow: none; }
+.vide {
+  font-size: 0.6rem;
+  opacity: 0.5;
+  text-align: center;
+  padding: 0 0.2rem;
+}
+
+.bottes { display: flex; gap: 0.3rem; }
+.botte {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(243, 236, 220, 0.2);
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+.botte svg { width: 22px; height: 22px; }
+.botte.acquise {
+  opacity: 1;
+  filter: none;
+  background: var(--creme);
+  border-color: var(--or);
+  box-shadow: 0 0 0 2px rgba(217, 180, 91, 0.45);
+}
+
+.jetons { display: flex; flex-wrap: wrap; gap: 0.25rem; min-height: 1.2rem; }
+.jeton {
+  font-size: 0.7rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(79, 143, 192, 0.3);
+  border: 1px solid rgba(79, 143, 192, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+.jeton small { opacity: 0.7; margin-left: 0.15rem; }
+.coups-fourres {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--or);
+}
+
+/* Pioche et dernier coup, entre les deux tableaux */
+.talon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.7rem;
+}
+.talon-pile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.talon-pile .carte { width: var(--l-mini); height: var(--h-mini); }
+.talon-nom {
+  font-size: 0.68rem;
+  opacity: 0.7;
+  text-align: center;
+  max-width: 6rem;
+}
+
+/* ------------------------------------------------------------ Panneaux */
+
+.panneau {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--h-carte) + 5rem);
+  transform: translateX(-50%);
+  background: rgba(8, 32, 25, 0.96);
+  border: 1px solid var(--or);
+  border-radius: 14px;
+  padding: 1rem 1.4rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  z-index: 10;
+  max-width: min(92vw, 520px);
+}
+.panneau-large { bottom: 50%; transform: translate(-50%, 50%); }
+.panneau-titre { margin: 0 0 0.8rem; font-size: 1.05rem; font-weight: 600; }
+.panneau-actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+
+.bouton {
+  font: inherit;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(243, 236, 220, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--creme);
+  cursor: pointer;
+}
+.bouton:hover { background: rgba(255, 255, 255, 0.16); }
+.bouton.principal {
+  background: var(--or);
+  border-color: var(--or);
+  color: #1a2b22;
+  font-weight: 600;
+}
+.bouton.principal:hover { background: #e7c976; }
+
+.feuille {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.feuille th, .feuille td {
+  padding: 0.3rem 0.6rem;
+  border-bottom: 1px solid rgba(243, 236, 220, 0.15);
+  text-align: right;
+}
+.feuille th:first-child, .feuille td:first-child { text-align: left; opacity: 0.8; }
+.feuille td:not(:first-child) { white-space: nowrap; }
+.feuille small { opacity: 0.6; margin-left: 0.25rem; }
+.feuille .ligne-forte td { font-weight: 700; color: var(--or); }
+
+/* ------------------------------------------------------------- Journal */
+
+.journal {
+  position: fixed;
+  right: 0.8rem;
+  bottom: 0.8rem;
+  width: min(250px, 42vw);
+  max-height: 9.5rem;
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  opacity: 0.75;
+  pointer-events: none;
+  text-align: right;
+}
+.journal p { margin: 0; }
+
+dialog {
+  border: 1px solid var(--or);
+  border-radius: 14px;
+  background: #0b2c22;
+  color: var(--creme);
+  max-width: min(92vw, 560px);
+  padding: 1.4rem;
+}
+dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+dialog h2 { margin-top: 0; color: var(--or); font-family: Georgia, serif; }
+dialog ul { padding-left: 1.1rem; line-height: 1.55; font-size: 0.9rem; }
+dialog li { margin-bottom: 0.4rem; }
+
+/* ---------------------------------------------------------- Responsive */
+
+@media (max-width: 980px) {
+  :root { --l-carte: 68px; --h-carte: 99px; --l-mini: 40px; --h-mini: 58px; }
+  .journal { display: none; }
+  .tableau { padding: 0.5rem; }
+}
+
+@media (max-width: 700px) {
+  :root { --l-carte: 58px; --h-carte: 84px; --l-mini: 34px; --h-mini: 49px; }
+  .barre { gap: 0.6rem; padding: 0.5rem 0.7rem; }
+  .barre h1 { font-size: 1.15rem; }
+  .infos { font-size: 0.75rem; gap: 0.5rem; }
+  #info-objectif { display: none; }
+  .tapis {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    padding: 0.5rem 0.2rem 0.8rem;
+    gap: 0.2rem;
+  }
+  /* Les places latérales sont étroites : l'étiquette s'y réduit au nom. */
+  .etiquette { font-size: 0.62rem; padding: 0.1rem 0.35rem; }
+  .place-ouest .etiquette.donneur::after,
+  .place-est .etiquette.donneur::after { content: none; }
+  .place-sud { grid-column: 1 / -1; }
+  /* Les deux tableaux doivent tenir côte à côte : on les laisse se comprimer. */
+  .tableaux { gap: 0.3rem; }
+  .tableau { min-width: 0; padding: 0.4rem; gap: 0.3rem; }
+  .tableau-tete { flex-wrap: wrap; gap: 0.2rem; font-size: 0.72rem; }
+  .compteur strong { font-size: 1.3rem; }
+  .botte { width: 22px; height: 22px; }
+  .botte svg { width: 16px; height: 16px; }
+  .bottes { gap: 0.15rem; }
+  .talon { gap: 0.4rem; }
+  .talon-nom { max-width: 4.5rem; }
+  .jetons { font-size: 0.65rem; }
+  /* Sept cartes en main : elles se chevauchent plutôt que de déborder de l'écran. */
+  .main-joueur { gap: 0; flex-wrap: wrap; justify-content: center; max-width: 100%; }
+  .main-joueur .carte { margin-left: calc(var(--l-carte) * -0.16); }
+  .main-joueur .carte:first-child { margin-left: 0; }
+}

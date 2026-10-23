@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mille Bornes</title>
+<meta name="description" content="Jeu de Mille Bornes à quatre, par équipes de deux, jouable directement dans le navigateur.">
+<meta name="theme-color" content="#0d3b2e">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="barre">
+  <h1>Mille Bornes</h1>
+  <div class="scores">
+    <div class="score" data-equipe="0">
+      <span class="score-nom" id="nom-equipe-0">Vous &amp; Nord</span>
+      <span class="score-valeur" id="score-0">0</span>
+    </div>
+    <div class="score-sep">/</div>
+    <div class="score" data-equipe="1">
+      <span class="score-nom" id="nom-equipe-1">Ouest &amp; Est</span>
+      <span class="score-valeur" id="score-1">0</span>
+    </div>
+  </div>
+  <div class="infos">
+    <span id="info-manche">Manche 1</span>
+    <span id="info-pioche" class="pastille">Pioche 81</span>
+    <span id="info-objectif">Partie en 5000 points</span>
+  </div>
+  <button type="button" id="btn-regles" class="lien">Règles</button>
+</header>
+
+<main class="tapis" id="tapis">
+  <div class="place place-nord">
+    <div class="etiquette" id="etiq-2">Nord</div>
+    <div class="main-adverse" id="main-2"></div>
+  </div>
+  <div class="place place-ouest">
+    <div class="etiquette" id="etiq-1">Ouest</div>
+    <div class="main-adverse" id="main-1"></div>
+  </div>
+  <div class="place place-est">
+    <div class="etiquette" id="etiq-3">Est</div>
+    <div class="main-adverse" id="main-3"></div>
+  </div>
+
+  <div class="centre">
+    <div class="tableaux">
+      <section class="tableau" id="tableau-0"></section>
+      <div class="talon">
+        <div class="talon-pile">
+          <div class="carte dos" id="pioche-dos"></div>
+          <span class="talon-nom" id="pioche-nombre">81</span>
+        </div>
+        <div class="talon-pile">
+          <div class="emplacement" id="dernier-coup"></div>
+          <span class="talon-nom" id="dernier-coup-nom">Dernier coup</span>
+        </div>
+      </div>
+      <section class="tableau" id="tableau-1"></section>
+    </div>
+  </div>
+
+  <div class="place place-sud">
+    <div class="main-joueur" id="main-0"></div>
+    <div class="actions" id="actions"></div>
+    <div class="etiquette" id="etiq-0">Vous</div>
+  </div>
+</main>
+
+<section class="panneau" id="panneau-coup-fourre" hidden>
+  <p class="panneau-titre" id="coup-fourre-titre"></p>
+  <div class="panneau-actions" id="coup-fourre-actions"></div>
+</section>
+
+<section class="panneau panneau-large" id="panneau-manche" hidden>
+  <p class="panneau-titre" id="manche-titre"></p>
+  <table class="feuille" id="feuille"></table>
+  <div class="panneau-actions">
+    <button type="button" class="bouton principal" id="btn-suivante">Manche suivante</button>
+  </div>
+</section>
+
+<section class="panneau panneau-large" id="panneau-fin" hidden>
+  <p class="panneau-titre" id="fin-titre"></p>
+  <p id="fin-detail"></p>
+  <div class="panneau-actions">
+    <button type="button" class="bouton principal" id="btn-rejouer">Nouvelle partie</button>
+  </div>
+</section>
+
+<aside class="journal" id="journal" aria-live="polite"></aside>
+
+<dialog id="dlg-regles">
+  <h2>Règles appliquées</h2>
+  <ul>
+    <li>Paquet de 106 cartes, quatre joueurs en deux équipes (Vous &amp; Nord contre Ouest &amp; Est) ; chaque équipe tient un seul tableau. Six cartes en main, une carte piochée puis une carte jouée ou défaussée à chaque tour.</li>
+    <li><strong>Démarrer</strong> : il faut un <em>feu vert</em> sur la batterie avant de poser la moindre borne.</li>
+    <li><strong>Attaques</strong> : feu rouge, panne d'essence, crevaison et accident ne se jouent que sur une équipe qui roule ; la limitation de vitesse se pose à tout moment. Chacune se lève par sa parade — feu vert, essence, roue de secours, réparations, fin de limitation — puis il faut un nouveau feu vert pour repartir.</li>
+    <li><strong>Limitation de vitesse</strong> : tant qu'elle tient, l'équipe ne pose que des bornes de 25 ou 50.</li>
+    <li><strong>Bottes</strong> : as du volant, citerne d'essence, increvable et véhicule prioritaire protègent définitivement de l'attaque correspondante et annulent celle qui est en cours. Le véhicule prioritaire tient lieu de feu vert permanent et couvre feu rouge comme limitation.</li>
+    <li><strong>Coup fourré</strong> : une botte abattue au moment même où l'attaque tombe annule celle-ci, rapporte 300 points et rend la main à son auteur.</li>
+    <li>Une équipe ne pose pas plus de deux cartes 200 bornes par manche, et doit atteindre les 1000 bornes exactement.</li>
+    <li>La manche s'arrête aux 1000 bornes, ou quand la pioche et les mains sont vides — personne ne marque alors de prime.</li>
+    <li><strong>Décompte</strong> : 1 point par borne parcourue ; 100 points par botte, 700 pour les quatre ; 300 par coup fourré. Pour l'équipe qui boucle la manche : 400 points, plus 300 <em>sans les 200</em>, 500 de <em>capot</em> si l'adversaire est resté à zéro, et 300 de <em>couronnement</em> si la pioche était épuisée.</li>
+    <li>La partie s'arrête à 5000 points.</li>
+  </ul>
+  <button type="button" class="bouton" id="btn-fermer-regles">Fermer</button>
+</dialog>
+
+<script type="module" src="src/ui.js"></script>
+</body>
+</html>

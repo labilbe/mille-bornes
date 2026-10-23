@@ -1,0 +1,10 @@
+{
+  "name": "mille-bornes",
+  "version": "1.0.0",
+  "description": "Jeu de Mille Bornes jouable dans le navigateur",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node test/selfplay.mjs"
+  }
+}

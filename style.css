@@ -150,8 +150,9 @@ body {
   position: relative;
   width: var(--l-carte);
   height: var(--h-carte);
-  border-radius: 7px;
-  background: #fdfbf5;
+  border-radius: 8px;
+  /* La face SVG porte son propre fond et ses propres coins : rien dessous. */
+  background: none;
   box-shadow: var(--ombre);
   color: var(--noir);
   flex: 0 0 auto;

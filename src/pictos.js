@@ -1,7 +1,7 @@
 // Pictogrammes des cartes, dessinés dans un carré de 64 × 64 unités.
 // Chacun est un fragment SVG autonome, repositionné par `faces.js`.
 
-const GRIS = '#55616e';
+const GRIS = '#4a5663';
 const SOMBRE = '#2b2b2b';
 const ETEINT = '#5a5a5a';
 const ROUGE = '#c0392b';
@@ -37,15 +37,21 @@ function panneau(barre) {
 
 /** Jerrican ; `vide` le grise et le barre d'un trait rouge. */
 function jerrican(vide) {
-  const corps = vide ? GRIS : VERT;
-  const barre = vide
-    ? `<line x1="8" y1="56" x2="56" y2="8" stroke="${ROUGE}" stroke-width="6" stroke-linecap="round"/>`
+  const corps = vide ? '#9aa3ad' : VERT;
+  // Plein, une goutte le marque ; vide, une barre le raye — posée en dernier.
+  const marque = vide
+    ? `<line x1="10" y1="54" x2="54" y2="10" stroke="${ROUGE}" stroke-width="5.5"
+             stroke-linecap="round"/>`
     : `<path d="M32 22c4 5 7 8 7 12a7 7 0 0 1-14 0c0-4 3-7 7-12z" fill="${BLANC}"/>`;
   return `
-    <path d="M38 8h8l6 6v8h-6v-6h-8z" fill="${SOMBRE}"/>
-    <rect x="10" y="12" width="34" height="46" rx="5" fill="${corps}"/>
-    <path d="M16 12h22v7a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" fill="${SOMBRE}" opacity="0.35"/>
-    ${barre}`;
+    <rect x="14" y="7" width="24" height="6" rx="3" fill="${SOMBRE}"/>
+    <path d="M45 20h5a4 4 0 0 1 4 4v7h-5v-6h-4z" fill="${SOMBRE}"/>
+    <rect x="9" y="13" width="37" height="47" rx="5" fill="${corps}"
+          stroke="${SOMBRE}" stroke-width="1.8"/>
+    <g stroke="${SOMBRE}" stroke-width="1.6" opacity="0.4" fill="none">
+      <path d="M16 21l23 31M39 21L16 52"/>
+    </g>
+    ${marque}`;
 }
 
 /** Pneu ; `creve` l'affaisse et le fend. */
@@ -82,14 +88,15 @@ function voiture(choc) {
 /** Clé plate et tournevis croisés. */
 function outils() {
   return `
-    <g transform="rotate(-38 32 32)">
-      <rect x="27" y="8" width="10" height="48" rx="4" fill="${GRIS}"/>
-      <path d="M22 4h8v8h4V4h8v11l-6 5h-8l-6-5z" fill="${GRIS}"/>
-      <circle cx="32" cy="52" r="5" fill="${SOMBRE}"/>
+    <g transform="rotate(-32 32 32)">
+      <rect x="28" y="12" width="8" height="44" rx="4" fill="${GRIS}"/>
+      <path d="M23 6h7v9h4V6h7v12l-6 5h-6l-6-5z" fill="${GRIS}"/>
+      <circle cx="32" cy="54" r="4.5" fill="${GRIS}"/>
     </g>
-    <g transform="rotate(42 32 32)">
-      <rect x="29" y="30" width="6" height="28" rx="2" fill="${SOMBRE}"/>
-      <rect x="26" y="8" width="12" height="24" rx="5" fill="${ROUGE}"/>
+    <g transform="rotate(38 32 32)">
+      <path d="M29 28h6v26l-3 5-3-5z" fill="#8a9099"/>
+      <rect x="25" y="8" width="14" height="22" rx="5" fill="${ROUGE}"/>
+      <rect x="25" y="26" width="14" height="4" fill="${SOMBRE}" opacity="0.3"/>
     </g>`;
 }
 
@@ -117,14 +124,18 @@ function citerne() {
     <circle cx="54" cy="50" r="7" fill="${SOMBRE}"/><circle cx="54" cy="50" r="3" fill="${BLANC}"/>`;
 }
 
-/** Pneu protégé d'un écusson : rien ne le crève. */
+/** Pneu frappé d'un écusson, posé en coin pour que la roue reste visible. */
 function increvable() {
   return `
-    <circle cx="32" cy="32" r="28" fill="${SOMBRE}"/>
-    <circle cx="32" cy="32" r="14" fill="${BLANC}"/>
-    <path d="M32 10l16 6v12c0 10-7 17-16 20-9-3-16-10-16-20V16z" fill="${VERT}"/>
-    <path d="M24 31l6 7 12-13" fill="none" stroke="${BLANC}" stroke-width="5"
-          stroke-linecap="round" stroke-linejoin="round"/>`;
+    <circle cx="29" cy="30" r="27" fill="${SOMBRE}"/>
+    <circle cx="29" cy="30" r="13" fill="${BLANC}"/>
+    <circle cx="29" cy="30" r="4" fill="${GRIS}"/>
+    <g transform="translate(36 32)">
+      <path d="M14 0L26 4.5v9c0 7.5-5 12.5-12 15-7-2.5-12-7.5-12-15v-9z" fill="${VERT}"
+            stroke="${BLANC}" stroke-width="2"/>
+      <path d="M8 15l4 4.5 9-9.5" fill="none" stroke="${BLANC}" stroke-width="3.4"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </g>`;
 }
 
 /** Losange de route prioritaire. */
@@ -134,14 +145,16 @@ function prioritaire() {
     <path d="M32 12l20 20-20 20-20-20z" fill="${JAUNE}"/>`;
 }
 
-/** Borne kilométrique : la route et son jalon. */
-function borne() {
+/** La route qui file à l'horizon, bande médiane comprise. */
+function route() {
   return `
-    <path d="M6 58L22 10h20l16 48z" fill="${SOMBRE}"/>
+    <path d="M27 6h10l25 58H2z" fill="#3c4650"/>
+    <path d="M27 6h10l1.8 10h-13.6z" fill="#4a5560"/>
     <g fill="${BLANC}">
-      <rect x="29" y="14" width="6" height="9"/>
-      <rect x="29" y="29" width="6" height="9"/>
-      <rect x="29" y="44" width="6" height="12"/>
+      <rect x="30.2" y="9" width="3.6" height="6" rx="1"/>
+      <rect x="29.8" y="21" width="4.4" height="8" rx="1.2"/>
+      <rect x="29.2" y="36" width="5.6" height="10" rx="1.5"/>
+      <rect x="28.4" y="53" width="7.2" height="11" rx="2"/>
     </g>`;
 }
 
@@ -160,5 +173,5 @@ export const PICTOS = {
   citerne: () => citerne(),
   increvable: () => increvable(),
   prioritaire: () => prioritaire(),
-  route: () => borne(),
+  route: () => route(),
 };

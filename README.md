@@ -77,8 +77,15 @@ inutile par sa propre botte, borne trop grosse pour la distance restante, feu ve
 
 ## Cartes
 
-Les faces sont dessinées en SVG dans ce dépôt : un bandeau coloré qui range la carte — bleu pour
-les bornes, rouge pour les attaques, vert pour les parades, or pour les bottes —, un pictogramme
-géométrique et la nature de la carte en pied. Aucune image n'est chargée.
+Les illustrations du Mille Bornes sont sous droits — il n'en existe pas de jeu libre, comme le
+portrait français de David Bellot utilisé par la coinche. **Aucune n'est reprise ici** : les faces
+sont entièrement dessinées en SVG dans ce dépôt, et seule leur mise en page fait écho aux vraies
+cartes — fond ivoire, large cadre de couleur, vignette illustrée au centre sur un ciel et un sol,
+titre en capitales dessous, nature de la carte en pied.
+
+C'est la couleur du cadre qui range la carte : bleu pour les bornes, rouge pour les attaques, vert
+pour les parades, or pour les bottes. Les pictogrammes (`src/pictos.js`) sont des figures
+géométriques — feu tricolore, panneau rond, jerrican, pneu, voiture, outils, volant, citerne,
+losange de priorité. Aucune image n'est chargée : tout est composé à l'affichage.
 
 Publié via GitHub Pages depuis la branche `main` (fichier `.nojekyll` pour servir le dossier tel quel).

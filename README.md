@@ -80,12 +80,19 @@ inutile par sa propre botte, borne trop grosse pour la distance restante, feu ve
 Les illustrations du Mille Bornes sont sous droits — il n'en existe pas de jeu libre, comme le
 portrait français de David Bellot utilisé par la coinche. **Aucune n'est reprise ici** : les faces
 sont entièrement dessinées en SVG dans ce dépôt, et seule leur mise en page fait écho aux vraies
-cartes — fond ivoire, large cadre de couleur, vignette illustrée au centre sur un ciel et un sol,
-titre en capitales dessous, nature de la carte en pied.
+cartes.
 
-C'est la couleur du cadre qui range la carte : bleu pour les bornes, rouge pour les attaques, vert
-pour les parades, or pour les bottes. Les pictogrammes (`src/pictos.js`) sont des figures
-géométriques — feu tricolore, panneau rond, jerrican, pneu, voiture, outils, volant, citerne,
-losange de priorité. Aucune image n'est chargée : tout est composé à l'affichage.
+- Carton blanc sans cadre, dessin à plat au centre, titre manuscrit en couleur.
+- **Tout est repris tête-bêche** : la carte se lit dans les deux sens, comme celles du jeu
+  d'origine. Les bornes répètent leur nombre de part et d'autre d'un paysage — ciel, coteau,
+  champ et borne plantée au bord — et portent leur valeur en index dans deux coins opposés.
+- Les titres sont les mots des vraies cartes : « Stop », « Roulez ! », « Crevé ! ». L'encre les
+  range : rouge pour ce qui arrête, vert pour ce qui repart, or pour les bottes, qui se repèrent
+  en plus à leur filet doré.
+
+Les pictogrammes (`src/pictos.js`) sont des figures géométriques — feu tricolore, panneau rond,
+jerrican, pneu, voiture, outils, volant, citerne, losange de priorité. Aucune image n'est chargée :
+tout est composé à l'affichage. L'écriture manuscrite s'appuie sur les cursives installées
+(Segoe Script, Bradley Hand, Brush Script) et retombe sur la cursive générique.
 
 Publié via GitHub Pages depuis la branche `main` (fichier `.nojekyll` pour servir le dossier tel quel).

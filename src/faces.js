@@ -1,47 +1,54 @@
 // Faces des cartes, composées en SVG, dans l'esprit des vraies cartes du
-// Mille Bornes : fond ivoire, large cadre de couleur, vignette illustrée au
-// centre et titre en capitales dessous. Les illustrations d'origine sont sous
-// droits : tout est redessiné ici, seule la mise en page leur fait écho.
+// Mille Bornes : carton blanc sans cadre, dessin à plat au centre, titre
+// manuscrit en couleur, et surtout la symétrie — tout est repris à l'envers,
+// de sorte que la carte se lise dans les deux sens, comme sur le jeu d'origine.
+// Les bornes y répètent leur nombre tête-bêche de part et d'autre du paysage.
 //
-// La couleur du cadre range la carte : bleu pour les bornes, rouge pour les
-// attaques, vert pour les parades, or pour les bottes.
+// Les illustrations d'origine sont sous droits : rien n'en est repris ici,
+// seule leur mise en page fait écho.
 
 import { ATTAQUE, BORNE, BOTTE, CARTES, PARADE } from './cards.js';
 import { PICTOS } from './pictos.js';
 
 const LARGEUR = 120;
 const HAUTEUR = 174;
+const CX = LARGEUR / 2;
+const CY = HAUTEUR / 2;
 
-// Géométrie de la vignette centrale, commune à toutes les cartes.
-const VIGNETTE = { x: 11, y: 14, l: 98, h: 94, r: 5 };
-const SOL = 96; // hauteur où le ciel cède la place au sol, dans la vignette
-
-export const COULEURS = {
-  [BORNE]: { cadre: '#1f4e79', fond: '#f6f2e6', ciel: '#dfe9f1', sol: '#cfc5ad', nature: 'Borne' },
-  [ATTAQUE]: { cadre: '#b4311f', fond: '#f7efe8', ciel: '#f2ded6', sol: '#dcc8bb', nature: 'Attaque' },
-  [PARADE]: { cadre: '#1e7a4b', fond: '#f1f4ea', ciel: '#dcebdf', sol: '#c9cdb2', nature: 'Parade' },
-  [BOTTE]: { cadre: '#a8822c', fond: '#fbf3dc', ciel: '#f7e8bd', sol: '#e2cd97', nature: 'Botte' },
+// Couleur d'encre du titre, qui range la carte comme sur le jeu d'origine :
+// rouge pour ce qui arrête, vert pour ce qui repart, or pour les bottes.
+const ENCRES = {
+  [BORNE]: '#1b4f8a',
+  [ATTAQUE]: '#cf2020',
+  [PARADE]: '#17813f',
+  [BOTTE]: '#b07d12',
 };
 
-// Libellés coupés à la main : deux lignes au plus sous la vignette.
+// Titres courts, ceux des vraies cartes : « Stop » plutôt que « feu rouge ».
 const TITRES = {
-  'feu-rouge': ['Feu rouge'],
-  limitation: ['Limitation', 'de vitesse'],
-  panne: ['Panne', "d'essence"],
-  crevaison: ['Crevaison'],
-  accident: ['Accident'],
-  'feu-vert': ['Feu vert'],
-  'fin-limitation': ['Fin de', 'limitation'],
-  essence: ['Essence'],
-  roue: ['Roue', 'de secours'],
-  reparations: ['Réparations'],
-  'as-du-volant': ['As du volant'],
-  citerne: ['Citerne', "d'essence"],
-  increvable: ['Increvable'],
-  prioritaire: ['Véhicule', 'prioritaire'],
+  'feu-rouge': 'Stop',
+  limitation: 'Limitation',
+  panne: "Panne d'essence",
+  crevaison: 'Crevé !',
+  accident: 'Accident',
+  'feu-vert': 'Roulez !',
+  'fin-limitation': 'Fin de limitation',
+  essence: 'Essence',
+  roue: 'Roue de secours',
+  reparations: 'Réparations',
+  'as-du-volant': 'As du volant',
+  citerne: "Citerne d'essence",
+  increvable: 'Increvable',
+  prioritaire: 'Prioritaire',
 };
 
-const SANS = 'Arial, Helvetica, sans-serif';
+// Écriture manuscrite du titre : les polices cursives installées d'un système à
+// l'autre, puis la cursive générique. Le chiffre reste en bâton, bien lisible.
+const PLUME = "'Segoe Script','Bradley Hand','Snell Roundhand','Brush Script MT',cursive";
+const BATON = 'Arial, Helvetica, sans-serif';
+
+/** Le même contenu, repris tête-bêche : c'est ce qui fait la carte à jouer. */
+const retourne = (contenu) => `<g transform="rotate(180 ${CX} ${CY})">${contenu}</g>`;
 
 /** Pictogramme centré en (cx, cy), à la taille demandée. */
 function picto(nom, cx, cy, taille) {
@@ -49,49 +56,53 @@ function picto(nom, cx, cy, taille) {
   return `<g transform="translate(${cx - taille / 2} ${cy - taille / 2}) scale(${e})">${PICTOS[nom]()}</g>`;
 }
 
+/** Corps de caractère du titre : les noms longs se resserrent. */
+function corps(titre) {
+  if (titre.length <= 8) return 17;
+  if (titre.length <= 12) return 14.5;
+  return 11.8;
+}
+
 /**
- * Vignette illustrée : un fond ciel, un sol, le dessin, et un filet autour.
- * Les coins du sol épousent ceux de la vignette, sans masque — deux faces de
- * cartes affichées côte à côte ne peuvent alors pas se disputer un même `id`.
+ * Paysage traversé par la route, au milieu de la carte des bornes : un ciel,
+ * un coteau, un champ et une borne plantée au bord. Il est posé une seule fois,
+ * entre les deux nombres tête-bêche.
  */
-function vignette(dessin, { cadre, ciel, sol }) {
-  const { x, y, l, h, r } = VIGNETTE;
-  const bas = y + h;
+function paysage() {
   return `
-    <rect x="${x}" y="${y}" width="${l}" height="${h}" rx="${r}" fill="${ciel}"/>
-    <path d="M${x} ${SOL}h${l}v${bas - SOL - r}a${r} ${r} 0 0 1-${r} ${r}H${x + r}a${r} ${r} 0 0 1-${r}-${r}z"
-          fill="${sol}"/>
-    ${dessin}
-    <rect x="${x}" y="${y}" width="${l}" height="${h}" rx="${r}" fill="none"
-          stroke="${cadre}" stroke-width="1.6"/>`;
+    <rect x="9" y="72" width="102" height="30" rx="4" fill="#cfe4f3"/>
+    <circle cx="24" cy="80" r="5" fill="#f0b03e"/>
+    <path d="M9 88c10-7 19-6 29-2s18 3 28-1 20-6 30-2 12 4 15 3v18H9z" fill="#7cb86a"/>
+    <path d="M62 93c14-4 28-5 40-2v5c-12-2-26-1-40 2z" fill="#e3d471"/>
+    <path d="M9 96c16-5 28 1 42-1s30-5 44-2 10 2 16 1v4a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4z"
+          fill="#4a9440"/>
+    <rect x="88" y="82" width="4.5" height="16" rx="1" fill="#fdfcf8"
+          stroke="#6b6b6b" stroke-width="0.5"/>
+    <path d="M88 82h4.5v4.5H88z" fill="#cf2020"/>
+    <rect x="9" y="72" width="102" height="30" rx="4" fill="none"
+          stroke="#1b4f8a" stroke-width="0.9" opacity="0.45"/>`;
 }
 
-/** Titre en capitales serrées, sur une ou deux lignes. */
-function titre(lignes, { cadre }) {
-  const textes = lignes.length === 1
-    ? `<text x="60" y="130" font-size="12.5">${lignes[0].toUpperCase()}</text>`
-    : `<text x="60" y="125" font-size="11.5">${lignes[0].toUpperCase()}</text>
-       <text x="60" y="138" font-size="11.5">${lignes[1].toUpperCase()}</text>`;
-  return `<g fill="${cadre}" text-anchor="middle" font-family="${SANS}"
-             font-weight="700" letter-spacing="0.6">${textes}</g>`;
+/** Carte de bornes : l'index au coin, le nombre en gros, le tout tête-bêche. */
+function faceBorne(valeur, encre) {
+  const demi = `
+    <text x="13" y="21" font-family="${BATON}" font-size="12" font-weight="700"
+          fill="${encre}">${valeur}</text>
+    <text x="${CX}" y="70" font-family="${BATON}" font-size="34" font-weight="700"
+          fill="${encre}" text-anchor="middle">${valeur}</text>`;
+  return `${paysage()}${demi}${retourne(demi)}`;
 }
 
-/** Mention de nature, en bas de carte : elle dit à quoi sert la carte. */
-function pied(nature, { cadre }) {
+/** Carte d'attaque, de parade ou de botte : le dessin au centre, le titre deux fois. */
+function faceDessin(nom, encre) {
+  const titre = TITRES[nom];
+  const demi = `
+    <text x="${CX}" y="27" font-family="${PLUME}" font-size="${corps(titre)}"
+          fill="${encre}" text-anchor="middle">${titre}</text>`;
   return `
-    <line x1="34" y1="150" x2="86" y2="150" stroke="${cadre}" stroke-width="0.8" opacity="0.4"/>
-    <text x="60" y="163" text-anchor="middle" fill="${cadre}" font-family="${SANS}"
-          font-size="8" font-weight="700" letter-spacing="2.2"
-          opacity="0.75">${nature.toUpperCase()}</text>`;
-}
-
-/** Vignette des bornes : la route file à l'horizon, le nombre par-dessus. */
-function routeEtNombre(valeur, { cadre }) {
-  return `
-    ${picto('route', 60, 62, 86)}
-    <text x="60" y="76" text-anchor="middle" fill="${cadre}" font-family="${SANS}"
-          font-size="40" font-weight="700" stroke="#f6f2e6" stroke-width="4"
-          paint-order="stroke">${valeur}</text>`;
+    <circle cx="${CX}" cy="${CY}" r="38" fill="${encre}" opacity="0.1"/>
+    ${picto(nom, CX, CY, 76)}
+    ${demi}${retourne(demi)}`;
 }
 
 /**
@@ -99,21 +110,23 @@ function routeEtNombre(valeur, { cadre }) {
  * @param {{type: string, nom: string, valeur?: number}} carte
  */
 export function faceCarte(carte) {
-  const def = carte.type === BORNE ? null : CARTES[carte.nom];
-  const couleurs = COULEURS[def ? def.type : BORNE];
+  const type = carte.type === BORNE ? BORNE : CARTES[carte.nom].type;
+  const encre = ENCRES[type];
+  // Les bottes se repèrent de loin à leur filet doré.
+  const filet = type === BOTTE
+    ? `<rect x="5.5" y="5.5" width="${LARGEUR - 11}" height="${HAUTEUR - 11}" rx="6"
+             fill="none" stroke="${encre}" stroke-width="1.4"/>`
+    : '';
 
-  const cadre = `
-    <rect x="0.5" y="0.5" width="${LARGEUR - 1}" height="${HAUTEUR - 1}" rx="9"
-          fill="${couleurs.fond}" stroke="${couleurs.cadre}" stroke-width="5"/>
-    <rect x="5" y="5" width="${LARGEUR - 10}" height="${HAUTEUR - 10}" rx="6" fill="none"
-          stroke="${couleurs.cadre}" stroke-width="0.8" opacity="0.5"/>`;
+  const carton = `
+    <rect x="1" y="1" width="${LARGEUR - 2}" height="${HAUTEUR - 2}" rx="8"
+          fill="#fdfcf8" stroke="#cdc6b6" stroke-width="1.4"/>${filet}`;
 
-  const dessin = carte.type === BORNE
-    ? routeEtNombre(carte.valeur, couleurs)
-    : picto(carte.nom, 60, 58, 80);
-  const lignes = carte.type === BORNE ? ['Bornes'] : TITRES[carte.nom];
+  const corpsCarte = carte.type === BORNE
+    ? faceBorne(carte.valeur, encre)
+    : faceDessin(carte.nom, encre);
 
   return `<svg class="face" viewBox="0 0 ${LARGEUR} ${HAUTEUR}" aria-hidden="true">
-    ${cadre}${vignette(dessin, couleurs)}${titre(lignes, couleurs)}${pied(couleurs.nature, couleurs)}
+    ${carton}${corpsCarte}
   </svg>`;
 }

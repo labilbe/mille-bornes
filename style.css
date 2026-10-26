@@ -202,7 +202,7 @@ body {
   outline: none;
   z-index: 2;
 }
-.main-joueur .carte.interdite { opacity: 0.45; }
+.main-joueur .carte.interdite { opacity: 0.62; }
 
 .actions {
   display: flex;
